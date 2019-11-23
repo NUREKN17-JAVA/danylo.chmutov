@@ -4,6 +4,7 @@ import junit.extensions.jfcunit.JFCTestCase;
 import junit.extensions.jfcunit.JFCTestHelper;
 import main.java.ua.nure.itai171.chmutov.usermanagement.gui.MainFrame;
 
+import javax.swing.*;
 import java.awt.*;
 
 import static junit.framework.Assert.assertNotNull;
@@ -16,7 +17,15 @@ public class MainFrameTest extends JFCTestCase {
         mainFrame = new MainFrame();
         mainFrame.setVisible(true);
     }
+    public void testBrowseControls() {
+        find(JPanel.class, BROWSE_PANEL);
+        find(JTable.class, USER_TABLE);
+        find(JButton.class, ADD_BUTTON);
+        find(JButton.class, EDIT_BUTTON);
+        find(JButton.class, DELETE_BUTTON);
+        find(JButton.class, DETAILS_BUTTON);
 
+    }
     public void tearDown() throws Exception {
 
 
