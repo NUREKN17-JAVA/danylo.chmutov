@@ -20,6 +20,10 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class MainFrameTest extends JFCTestCase {
+
+    private MainFrame mainFrame;
+
+
     private static final String TEST_FIRST_NAME = "Mike";
     private static final String TEST_LAST_NAME = "Mikovich";
     private static final String DATE_PATTERN = "dd.mm.yyyy";
@@ -39,9 +43,10 @@ public class MainFrameTest extends JFCTestCase {
     private static final String EDIT_BUTTON = "editButton";
     private static final String DELETE_BUTTON = "deleteButton";
     private static final String DETAILS_BUTTON = "detailsButton";
-    private MainFrame mainFrame;
 
-    public void setUp() {
+
+    public void setUp() throws Exception {
+        super.setUp();
         try {
             Properties properties = new Properties();
             properties.setProperty(DAO_FACTORY_PROPERTY, MockDaoFactory.class.getName());
@@ -56,6 +61,8 @@ public class MainFrameTest extends JFCTestCase {
         }
         mainFrame.setVisible(true);
     }
+
+    @Test
     public void testBrowseControls() {
         find(JPanel.class, BROWSE_PANEL);
         find(JTable.class, USER_TABLE);
@@ -64,27 +71,13 @@ public class MainFrameTest extends JFCTestCase {
         find(JButton.class, DELETE_BUTTON);
         find(JButton.class, DETAILS_BUTTON);
 
-
         JTable table = (JTable) find(JTable.class, USER_TABLE);
         assertEquals(3, table.getColumnCount());
         assertEquals(ID, table.getColumnName(0));
         assertEquals(FIRST_NAME, table.getColumnName(1));
         assertEquals(LAST_NAME, table.getColumnName(2));
     }
-    public void tearDown() throws Exception {
 
-
-        mainFrame.setVisible(false);
-        TestHelper.cleanUp(this);
-    }
-
-    private Component find(Class componentClass, String name) {
-        NamedComponentFinder finder = new NamedComponentFinder(componentClass, name);
-        finder.setWait(0);
-        Component component = finder.find(mainFrame, 0);
-        assertNotNull("Could not find component ‘" + name + "’", component);
-        return component;
-    }
 
     public void testAddUser() {
         int expectedRowsCountBefore = 0;
@@ -119,5 +112,22 @@ public class MainFrameTest extends JFCTestCase {
         find(JPanel.class, BROWSE_PANEL);
         table = (JTable) find(JTable.class, USER_TABLE);
         assertEquals(expectedRowsCountAfter, table.getRowCount());
+    }
+
+
+
+    public void tearDown() throws Exception {
+        super.tearDown();
+        userDao.verify();
+        mainFrame.setVisible(false);
+        TestHelper.cleanUp(this);
+    }
+
+    private Component find(Class componentClass, String name) {
+        NamedComponentFinder finder = new NamedComponentFinder(componentClass, name);
+        finder.setWait(0);
+        Component component = finder.find(mainFrame, 0);
+        assertNotNull("Could not find component ‘" + name + "’", component);
+        return component;
     }
 }

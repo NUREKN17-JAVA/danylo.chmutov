@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 
-public class AddPanel extends AbstractModifiedPanel implements ActionListener {
+public class AddPanel extends AbstractModifiedPanel {
 
     private static final String ADD_PANEL = "addPanel";
     private MainFrame parent;
@@ -19,6 +19,8 @@ public class AddPanel extends AbstractModifiedPanel implements ActionListener {
         this.parent = parent;
         this.setName(ADD_PANEL);
     }
+
+    @Override
     protected void performAction() {
         User user = new User();
         user.setFirstName(getFirstNameField().getText());
@@ -32,10 +34,14 @@ public class AddPanel extends AbstractModifiedPanel implements ActionListener {
         try {
             parent.getUserDao().create(user);
         } catch (DatabaseException e1) {
-            JOptionPane.showMessageDialog(this, e1.getMessage(), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, e1.getMessage(), ERROR_TITLE,
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    @Override
     protected String getConfirmButtonText() {
         return Messages.getString("addButton");
     }
+
 }
