@@ -4,10 +4,14 @@ import junit.extensions.jfcunit.JFCTestCase;
 import junit.extensions.jfcunit.JFCTestHelper;
 import main.java.ua.nure.itai171.chmutov.usermanagement.User;
 import main.java.ua.nure.itai171.chmutov.usermanagement.gui.MainFrame;
+import main.java.ua.nure.itai171.chmutov.usermanagement.util.Messages;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -47,6 +51,12 @@ public class MainFrameTest extends JFCTestCase {
         find(JButton.class, DELETE_BUTTON);
         find(JButton.class, DETAILS_BUTTON);
 
+
+        JTable table = (JTable) find(JTable.class, USER_TABLE);
+        assertEquals(3, table.getColumnCount());
+        assertEquals(ID, table.getColumnName(0));
+        assertEquals(FIRST_NAME, table.getColumnName(1));
+        assertEquals(LAST_NAME, table.getColumnName(2));
     }
     public void tearDown() throws Exception {
 

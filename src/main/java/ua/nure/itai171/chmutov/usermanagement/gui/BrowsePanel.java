@@ -1,5 +1,7 @@
 package main.java.ua.nure.itai171.chmutov.usermanagement.gui;
 
+import main.java.ua.nure.itai171.chmutov.usermanagement.util.Messages;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

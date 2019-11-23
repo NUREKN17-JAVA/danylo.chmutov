@@ -1,5 +1,7 @@
 package main.java.ua.nure.itai171.chmutov.usermanagement.gui;
 
+import main.java.ua.nure.itai171.chmutov.usermanagement.util.Messages;
+
 import java.awt.event.ActionListener;
 
 public class AddPanel extends AbstractModifiedPanel implements ActionListener {
@@ -14,5 +16,8 @@ public class AddPanel extends AbstractModifiedPanel implements ActionListener {
     }
     protected void performAction() {
 
+    }
+    protected String getConfirmButtonText() {
+        return Messages.getString("addButton");
     }
 }
