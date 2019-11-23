@@ -35,6 +35,9 @@ public class MainFrame extends JFrame {
         ((BrowsePanel) browsePanel).initTable();
         return browsePanel;
     }
+    public void showBrowsePanel() {
+        showPanel(getBrowsePanel());
+    }
     public void showAddPanel() {
         showPanel(getAddPanel());
     }

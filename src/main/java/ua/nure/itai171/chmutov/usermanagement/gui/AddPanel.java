@@ -1,8 +1,13 @@
 package main.java.ua.nure.itai171.chmutov.usermanagement.gui;
 
+import main.java.ua.nure.itai171.chmutov.usermanagement.User;
+import main.java.ua.nure.itai171.chmutov.usermanagement.db.DatabaseException;
 import main.java.ua.nure.itai171.chmutov.usermanagement.util.Messages;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 
 public class AddPanel extends AbstractModifiedPanel implements ActionListener {
 
@@ -15,7 +20,20 @@ public class AddPanel extends AbstractModifiedPanel implements ActionListener {
         this.setName(ADD_PANEL);
     }
     protected void performAction() {
-
+        User user = new User();
+        user.setFirstName(getFirstNameField().getText());
+        user.setLastName(getLastNameField().getText());
+        try {
+            user.setDateOfBirth(format.parse(getDateOfBirthField().getText()));
+        } catch (ParseException e1) {
+            getDateOfBirthField().setBackground(Color.RED);
+            return;
+        }
+        try {
+            parent.getUserDao().create(user);
+        } catch (DatabaseException e1) {
+            JOptionPane.showMessageDialog(this, e1.getMessage(), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+        }
     }
     protected String getConfirmButtonText() {
         return Messages.getString("addButton");
