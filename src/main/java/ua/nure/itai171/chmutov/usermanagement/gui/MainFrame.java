@@ -5,6 +5,9 @@ import java.awt.*;
 import java.util.Objects;
 
 public class MainFrame extends JFrame {
+    private static final int FRAME_WIDTH = 800;
+    private static final int FRAME_HEIGHT = 600;
+
     public static void main(String[] args) {
         MainFrame mainFrame = new MainFrame();
         mainFrame.setVisible(true);
