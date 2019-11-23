@@ -1,19 +1,20 @@
 package main.java.ua.nure.itai171.chmutov.usermanagement.gui;
 
+import main.java.ua.nure.itai171.chmutov.usermanagement.User;
+import main.java.ua.nure.itai171.chmutov.usermanagement.db.DatabaseException;
 import main.java.ua.nure.itai171.chmutov.usermanagement.util.Messages;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.Objects;
 
 public class BrowsePanel extends JPanel implements ActionListener {
 
     private static final String BROWSE_PANEL = "browsePanel";
     private static final String ADD_BUTTON = "addButton";
-    private static final String CANCEL_BUTTON = "cancelButton";
-    private static final String OK_BUTTON= "okButton";
     private static final String EDIT_BUTTON = "editButton";
     private static final String DELETE_BUTTON = "deleteButton";
     private static final String DETAILS_BUTTON = "detailsButton";
@@ -24,12 +25,15 @@ public class BrowsePanel extends JPanel implements ActionListener {
     private JScrollPane tablePanel;
     private JPanel buttonPanel;
     private JButton addButton;
-    private JButton cancelButton;
-    private JButton okButton;
     private JButton editButton;
     private JButton deleteButton;
     private JButton detailsButton;
     private JTable userTable;
+
+    public BrowsePanel(MainFrame parent) {
+        this.parent = parent;
+        initialize();
+    }
 
     private void initialize() {
         setLayout(new BorderLayout());
@@ -37,6 +41,7 @@ public class BrowsePanel extends JPanel implements ActionListener {
         add(getTablePanel(), BorderLayout.CENTER);
         add(getButtonsPanel(), BorderLayout.SOUTH);
     }
+
     private JScrollPane getTablePanel() {
         if (Objects.isNull(tablePanel)) {
             tablePanel = new JScrollPane(getUserTable());
@@ -76,26 +81,6 @@ public class BrowsePanel extends JPanel implements ActionListener {
         }
         return editButton;
     }
-    private JButton getOkButton() {
-        if (okButton == null){
-            okButton = new JButton();
-            okButton.setText("Добавить");
-            okButton.setName("okButton");
-            okButton.setActionCommand("ok");
-            okButton.addActionListener(this);
-        }
-        return okButton;
-    }
-    private JButton getCancelButton() {
-        if (cancelButton == null){
-            cancelButton = new JButton();
-            cancelButton.setText("canceled");
-            cancelButton.setName("canceledButton");
-            cancelButton.setActionCommand("cancel");
-            cancelButton.addActionListener(this);
-        }
-        return cancelButton;
-    }
 
     private JButton getDeleteButton() {
         if (Objects.isNull(deleteButton)) {
@@ -106,14 +91,6 @@ public class BrowsePanel extends JPanel implements ActionListener {
             deleteButton.addActionListener(this);
         }
         return deleteButton;
-    }
-    private JTable getUserTable() {
-        if (Objects.isNull(userTable)) {
-            userTable = new JTable();
-            userTable.setName(USER_TABLE);
-        }
-        initTable();
-        return userTable;
     }
 
     private JButton getDetailsButton() {
@@ -126,8 +103,75 @@ public class BrowsePanel extends JPanel implements ActionListener {
         }
         return detailsButton;
     }
-    public void actionPerformed(ActionEvent e) {
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String actionCommand = e.getActionCommand();
+        if ("add".equalsIgnoreCase(actionCommand)) {
+            this.setVisible(false);
+            parent.showAddPanel();
+        }
+        if (userTable.getSelectedRow() != -1) {
+            if ("details".equalsIgnoreCase(actionCommand)) {
+                try {
+                    User user = getSelectedUser();
+                    this.setVisible(false);
+                    parent.showDetailsPanel(user);
+                } catch (DatabaseException e1) {
+                    JOptionPane.showMessageDialog(this, e1.getMessage(), ERROR_TITLE,
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            if ("edit".equalsIgnoreCase(actionCommand)) {
+                try {
+                    User user = getSelectedUser();
+                    this.setVisible(false);
+                    parent.showUpdatePanel(user);
+                } catch (DatabaseException e1) {
+                    JOptionPane.showMessageDialog(this, e1.getMessage(), ERROR_TITLE,
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            if ("delete".equalsIgnoreCase(actionCommand)) {
+                try {
+                    User user = getSelectedUser();
+                    int answer = JOptionPane.showConfirmDialog(this, Messages.getString("deleteConfirmation") + user + "?");
+                    if (answer == 0) {
+                        parent.getUserDao().deleteUser(user);
+                        this.initTable();
+                    }
+                } catch (DatabaseException e1) {
+                    JOptionPane.showMessageDialog(this, e1.getMessage(), ERROR_TITLE,
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
     }
 
+    private User getSelectedUser() throws DatabaseException {
+        int row = userTable.getSelectedRow();
+        long userId = Long.parseLong(String.valueOf(userTable.getValueAt(row, 0)));
+        return parent.getUserDao().findUser(userId);
+    }
+
+    private JTable getUserTable() {
+        if (Objects.isNull(userTable)) {
+            userTable = new JTable();
+            userTable.setName(USER_TABLE);
+        }
+        initTable();
+        return userTable;
+    }
+
+    public void initTable() {
+        UserTableModel model;
+        try {
+            model = new UserTableModel(parent.getUserDao().findAll());
+        } catch (DatabaseException e) {
+            model = new UserTableModel(Collections.emptyList());
+            JOptionPane.showMessageDialog(this, e.getMessage(), ERROR_TITLE,
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        userTable.setModel(model);
+    }
 }

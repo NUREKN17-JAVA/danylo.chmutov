@@ -15,14 +15,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Properties;
-
+import com.mockobjects.dynamic.Mock;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class MainFrameTest extends JFCTestCase {
 
     private MainFrame mainFrame;
-
+    private Mock userDao;
 
     private static final String TEST_FIRST_NAME = "Mike";
     private static final String TEST_LAST_NAME = "Mikovich";
