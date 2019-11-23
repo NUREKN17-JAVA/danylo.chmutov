@@ -2,14 +2,36 @@ package test.java.ua.nure.itai171.chmutov.usermanagement.gui;
 
 import junit.extensions.jfcunit.JFCTestCase;
 import junit.extensions.jfcunit.JFCTestHelper;
+import main.java.ua.nure.itai171.chmutov.usermanagement.User;
 import main.java.ua.nure.itai171.chmutov.usermanagement.gui.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collections;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class MainFrameTest extends JFCTestCase {
+    private static final String TEST_FIRST_NAME = "Mike";
+    private static final String TEST_LAST_NAME = "Mikovich";
+    private static final String DATE_PATTERN = "dd.mm.yyyy";
+    private static final String DAO_FACTORY_PROPERTY = "dao.factory";
+    private static final String ID = Messages.getString("id");
+    private static final String FIRST_NAME = Messages.getString("name");
+    private static final String LAST_NAME = Messages.getString("lastName");
+    private static final String ADD_PANEL = "addPanel";
+    private static final String FIRST_NAME_FIELD = "firstNameField";
+    private static final String LAST_NAME_FIELD = "lastNameField";
+    private static final String DATE_OF_BIRTH_FIELD = "dateOfBirthField";
+    private static final String OK_BUTTON = "okButton";
+    private static final String CANCEL_BUTTON = "cancelButton";
+    private static final String BROWSE_PANEL = "browsePanel";
+    private static final String USER_TABLE = "userTable";
+    private static final String ADD_BUTTON = "addButton";
+    private static final String EDIT_BUTTON = "editButton";
+    private static final String DELETE_BUTTON = "deleteButton";
+    private static final String DETAILS_BUTTON = "detailsButton";
     private MainFrame mainFrame;
 
     public void setUp() {
@@ -39,5 +61,40 @@ public class MainFrameTest extends JFCTestCase {
         Component component = finder.find(mainFrame, 0);
         assertNotNull("Could not find component ‘" + name + "’", component);
         return component;
+    }
+
+    public void testAddUser() {
+        int expectedRowsCountBefore = 0;
+        int expectedRowsCountAfter = 1;
+        Date date = new Date();
+        DateFormat format = new SimpleDateFormat(DATE_PATTERN);
+        String testDate = format.format(date);
+        User user = new User(TEST_FIRST_NAME, TEST_LAST_NAME, date);
+        User expectedUser = new User(1L, TEST_FIRST_NAME, TEST_LAST_NAME, date);
+
+        userDao.expectAndReturn("create", user, expectedUser);
+        userDao.expectAndReturn("findAll", Collections.singletonList(expectedUser));
+
+        JTable table = (JTable) find(JTable.class, USER_TABLE);
+        assertEquals(expectedRowsCountBefore, table.getRowCount());
+
+        JButton addButton = (JButton) find(JButton.class, ADD_BUTTON);
+        getHelper().enterClickAndLeave(new MouseEventData(this, addButton));
+        find(JPanel.class, ADD_PANEL);
+
+        JTextField firstNameField = (JTextField) find(JTextField.class, FIRST_NAME_FIELD);
+        JTextField lastNameField = (JTextField) find(JTextField.class, LAST_NAME_FIELD);
+        JTextField dateOfBirthField = (JTextField) find(JTextField.class, DATE_OF_BIRTH_FIELD);
+        JButton okButton = (JButton) find(JButton.class, OK_BUTTON);
+        find(JButton.class, CANCEL_BUTTON);
+
+        getHelper().sendString(new StringEventData(this, firstNameField, TEST_FIRST_NAME));
+        getHelper().sendString(new StringEventData(this, lastNameField, TEST_LAST_NAME));
+        getHelper().sendString(new StringEventData(this, dateOfBirthField, testDate));
+        getHelper().enterClickAndLeave(new MouseEventData(this, okButton));
+
+        find(JPanel.class, BROWSE_PANEL);
+        table = (JTable) find(JTable.class, USER_TABLE);
+        assertEquals(expectedRowsCountAfter, table.getRowCount());
     }
 }

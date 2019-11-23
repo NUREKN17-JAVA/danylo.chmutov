@@ -10,6 +10,8 @@ public class BrowsePanel extends JPanel implements ActionListener {
 
     private static final String BROWSE_PANEL = "browsePanel";
     private static final String ADD_BUTTON = "addButton";
+    private static final String CANCEL_BUTTON = "cancelButton";
+    private static final String OK_BUTTON= "okButton";
     private static final String EDIT_BUTTON = "editButton";
     private static final String DELETE_BUTTON = "deleteButton";
     private static final String DETAILS_BUTTON = "detailsButton";
@@ -20,6 +22,8 @@ public class BrowsePanel extends JPanel implements ActionListener {
     private JScrollPane tablePanel;
     private JPanel buttonPanel;
     private JButton addButton;
+    private JButton cancelButton;
+    private JButton okButton;
     private JButton editButton;
     private JButton deleteButton;
     private JButton detailsButton;
@@ -69,6 +73,26 @@ public class BrowsePanel extends JPanel implements ActionListener {
             editButton.addActionListener(this);
         }
         return editButton;
+    }
+    private JButton getOkButton() {
+        if (okButton == null){
+            okButton = new JButton();
+            okButton.setText("Добавить");
+            okButton.setName("okButton");
+            okButton.setActionCommand("ok");
+            okButton.addActionListener(this);
+        }
+        return okButton;
+    }
+    private JButton getCancelButton() {
+        if (cancelButton == null){
+            cancelButton = new JButton();
+            cancelButton.setText("canceled");
+            cancelButton.setName("canceledButton");
+            cancelButton.setActionCommand("cancel");
+            cancelButton.addActionListener(this);
+        }
+        return cancelButton;
     }
 
     private JButton getDeleteButton() {
