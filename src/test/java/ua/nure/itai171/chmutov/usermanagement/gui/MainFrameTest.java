@@ -3,6 +3,7 @@ package test.java.ua.nure.itai171.chmutov.usermanagement.gui;
 import junit.extensions.jfcunit.JFCTestCase;
 import junit.extensions.jfcunit.JFCTestHelper;
 import main.java.ua.nure.itai171.chmutov.usermanagement.User;
+import main.java.ua.nure.itai171.chmutov.usermanagement.db.DaoFactory;
 import main.java.ua.nure.itai171.chmutov.usermanagement.gui.MainFrame;
 import main.java.ua.nure.itai171.chmutov.usermanagement.util.Messages;
 
@@ -10,8 +11,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -39,8 +42,18 @@ public class MainFrameTest extends JFCTestCase {
     private MainFrame mainFrame;
 
     public void setUp() {
-        setHelper(new JFCTestHelper());
-        mainFrame = new MainFrame();
+        try {
+            Properties properties = new Properties();
+            properties.setProperty(DAO_FACTORY_PROPERTY, MockDaoFactory.class.getName());
+            DaoFactory.init(properties);
+            userDao = ((MockDaoFactory) DaoFactory.getInstance()).getMockUserDao();
+            userDao.expectAndReturn("findAll", new ArrayList<User>());
+            userDao.expectAndReturn("findAll", new ArrayList<User>());
+            setHelper(new JFCTestHelper());
+            mainFrame = new MainFrame();
+        } catch (HeadlessException e) {
+            e.printStackTrace();
+        }
         mainFrame.setVisible(true);
     }
     public void testBrowseControls() {
