@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class DaoFactory {
-    public void init(Properties properties){
+    public static void init(Properties properties){
         properties = new Properties();
     }
     private static Properties properties;
